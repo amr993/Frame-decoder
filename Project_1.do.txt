@@ -1,0 +1,31 @@
+vsim -gui work.frame_decoder
+
+add wave  \
+sim:/frame_decoder/clk \
+sim:/frame_decoder/reset \
+sim:/frame_decoder/vdd \
+sim:/frame_decoder/vss \
+sim:/frame_decoder/word_in \
+sim:/frame_decoder/e \
+sim:/frame_decoder/address \
+sim:/frame_decoder/data \
+sim:/frame_decoder/current_state \
+sim:/frame_decoder/next_state \
+sim:/frame_decoder/flag
+
+force -freeze sim:/frame_decoder/clk 1 0, 0 {50 ns} -r 100
+force -freeze sim:/frame_decoder/reset 0 0
+force -freeze sim:/frame_decoder/vdd 1 0
+force -freeze sim:/frame_decoder/vss 0 0
+force -freeze sim:/frame_decoder/word_in 8'h7E 0
+
+
+run
+force -freeze sim:/frame_decoder/word_in 8'h80 0
+run
+force -freeze sim:/frame_decoder/word_in 8'h86 0
+run
+force -freeze sim:/frame_decoder/word_in 8'h88 0
+run
+force -freeze sim:/frame_decoder/word_in 8'hE7 0
+run

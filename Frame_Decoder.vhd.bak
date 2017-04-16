@@ -11,7 +11,7 @@ PORT(
 End ENTITY ;
 
 ARCHITECTURE moore_2 OF Frame_Decoder IS
-TYPE state_type IS ( SOF , ID , Simple , Extended , EOF , Data1 , Data2 , Error );
+TYPE state_type IS ( SOF , ID , Add , EOF , Data1 , Data2 , Error );
 SIGNAL current_state : state_type ;
 SIGNAL next_state : state_type ;
 SIGNAL flag : std_logic ;
@@ -35,7 +35,7 @@ BEGIN
 		IF word_in =  x"7E" THEN
 		   next_state <= ID ;
 		ELSE
-		   next_state <= Error ;
+		   next_state <= SOF ;
 		END IF ;
 	   WHEN ID => 
 		e <= '0';
@@ -43,33 +43,28 @@ BEGIN
 		data <= x"00" ;
 		IF word_in = x"80" THEN
 		   flag <= '1' ;
-		   next_state <= Simple ; 
+		   next_state <= Add ; 
 		ELSIF word_in = x"81" THEN
 		   flag <= '0' ;
-		   next_state <= Extended ;
+		   next_state <= Add ;
 		ELSE 
 		   next_state <= Error ;
 		END IF ;
-	   WHEN Simple => 
+	   WHEN Add => 
 		e <= '0';
 		address <= word_in ;
 		data <= x"00" ;
-		next_state <= Data1 ;
-	   WHEN Extended => 
-		e <= '0';
-		address <= word_in ;
-		data <= x"00" ;
-		next_state <= Data1 ;
+		next_state <= Data1 ; 
 	   WHEN Data1 =>
 		e <= '0';
 		address <= x"00" ;
 		data <= word_in ;
 		IF flag = '1' THEN
 		next_state <= EOF ;
-		ELSE
+		ELSIF flag = '0'  THEN
 		next_state <= Data2 ;
 		END IF ;
-		flag = '0';
+		flag <= '0';
 	   WHEN Data2 =>
 		e <= '0';
 		address <= x"00" ;
@@ -88,7 +83,11 @@ BEGIN
 		e <= '1';
 		address <= x"00";
 		data <= x"00";
+		IF word_in = x"7E"; THEN
+		next_state <= ID ;
+		ELSE
 		next_state <= SOF ;
-        END CASE ;
+        	END IF ;
+	END CASE ;
    END PROCESS ns;
 END ARCHITECTURE ; 

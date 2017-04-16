@@ -1,0 +1,15 @@
+vsim -gui work.decoder_tb
+
+add wave  \
+sim:/decoder_tb/clk \
+sim:/decoder_tb/reset \
+sim:/decoder_tb/e \
+sim:/decoder_tb/vdd \
+sim:/decoder_tb/vss \
+sim:/decoder_tb/word_in \
+sim:/decoder_tb/address \
+sim:/decoder_tb/data \
+sim:/decoder_tb/clk_period
+# force -freeze sim:/decoder_tb/clk 1 0, 0 {100 ns} -r 200
+
+run 4500ns
