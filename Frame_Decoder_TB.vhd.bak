@@ -159,7 +159,7 @@ sg : PROCESS IS
 	word_in <= x"89" ;
 	WAIT FOR clk_period ;
 	ASSERT e ='0'          REPORT "Error: address frame4 case e"       SEVERITY failure;
-	ASSERT address =x"89"  REPORT "Error: address frame4 case address" SEVERITY warning;
+	ASSERT address =x"89"  REPORT "Error: address frame4 case address" SEVERITY failure;
 	ASSERT data =x"00"     REPORT "Error: address frame4 case data"    SEVERITY failure;
 	WAIT FOR clk_period ;
 	
@@ -167,7 +167,7 @@ sg : PROCESS IS
 	WAIT FOR clk_period ;
 	ASSERT e ='0'          REPORT "Error: data frame4 case e"       SEVERITY failure;
 	ASSERT address =x"00"  REPORT "Error: data frame4 case address" SEVERITY failure;
-	ASSERT data =x"77"     REPORT "Error: data frame4 case data"    SEVERITY warning;
+	ASSERT data =x"77"     REPORT "Error: data frame4 case data"    SEVERITY failure;
 	WAIT FOR clk_period ;
 	
 	word_in <= x"EF" ;

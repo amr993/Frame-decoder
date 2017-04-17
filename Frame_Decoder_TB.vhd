@@ -1,5 +1,15 @@
 LIBRARY IEEE ;
 USE ieee.std_logic_1164.ALL ;
+-- Author: Amr Mohamed Taha
+-- This a testbench for the frame decoder where I test more than one case
+-- 1st case : Check the reset
+-- 2nd case : All data are correct and the frame is in simple mode
+-- 3rd case : All data are correct and the frame is in Extended mode
+-- 4th case : Reset between frames
+-- 5th case : Check if the SOF is not 7E
+-- 6th case : Check if the ID is not 80 nor 81
+-- 7th case : Check if 7E comes and I'm in the Error state
+-- 8th case : Check if EOF not E7 
 ENTITY Decoder_Tb IS
 END ENTITY ;
 ARCHITECTURE TB OF Decoder_Tb IS
@@ -29,12 +39,14 @@ END PROCESS clock ;
 
 sg : PROCESS IS
 	BEGIN
+--1st case
 	reset  <= '1' ;
 	WAIT FOR clk_period ;
 	ASSERT e ='0'          REPORT "Error: Reset1 case e"       SEVERITY warning;
 	ASSERT address =x"00"  REPORT "Error: Reset1 case address" SEVERITY warning;
 	ASSERT data =x"00"     REPORT "Error: Reset1 case data"    SEVERITY warning;
 	
+-- 2nd case
 	reset  <= '0' ;
 	word_in <= x"7E" ;
 	WAIT FOR clk_period ;
@@ -71,6 +83,7 @@ sg : PROCESS IS
 	ASSERT data =x"00"     REPORT "Error: EOF1 case data"    SEVERITY warning;
 	WAIT FOR clk_period ;
 	
+-- 3rd case
 	word_in <= x"7E" ;
 	WAIT FOR clk_period ;
 	ASSERT e ='0'          REPORT "Error: SOF2 case e"       SEVERITY warning;
@@ -113,6 +126,7 @@ sg : PROCESS IS
 	ASSERT data =x"00"     REPORT "Error: EOF2 case data"    SEVERITY warning;
 	WAIT FOR clk_period ;
 
+-- 4th case
 	reset  <= '1' ;
 	WAIT FOR clk_period ;
 	ASSERT e ='0'          REPORT "Error: Reset2 case e"       SEVERITY warning;
@@ -120,6 +134,7 @@ sg : PROCESS IS
 	ASSERT data =x"00"     REPORT "Error: Reset2 case data"    SEVERITY warning;
 	WAIT FOR clk_period ;
 
+-- 5th case
 	reset <= '0' ;
 	word_in <= x"EE" ;
 	WAIT FOR clk_period ;
@@ -128,6 +143,7 @@ sg : PROCESS IS
 	ASSERT data =x"00"     REPORT "wrong SOF : Error: SOF case data"    SEVERITY warning;
 	WAIT FOR clk_period ;
 
+-- 6th case
 	word_in <= x"7E" ;
 	WAIT FOR clk_period ;
 	ASSERT e ='0'          REPORT "Error: SOF3 case e"       SEVERITY warning;
@@ -135,6 +151,7 @@ sg : PROCESS IS
 	ASSERT data =x"00"     REPORT "Error: SOF3 case data"    SEVERITY warning;
 	WAIT FOR clk_period ;
 
+-- 7th case
 	word_in <= x"88" ;
 	WAIT FOR clk_period ;
 	ASSERT e ='0'          REPORT "Wrong ID : Error: ID frame3 case e"       SEVERITY warning;
@@ -142,6 +159,7 @@ sg : PROCESS IS
 	ASSERT data =x"00"     REPORT "Wrong ID : Error: ID frame3 case data"    SEVERITY warning;
 	WAIT FOR clk_period ;
 	
+-- 8th case
 	word_in <= x"7E" ;
 	WAIT FOR clk_period ;
 	ASSERT e ='1'          REPORT "Error: SOF4 case e"       SEVERITY warning;
